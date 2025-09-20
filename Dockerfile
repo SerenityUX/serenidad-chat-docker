@@ -67,12 +67,12 @@ RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
     echo "=== NAVIGATING TO SERVER DIRECTORY ===" && \
     cd server && \
     ls -la && \
-    echo "=== INITIALIZING GO MODULE IN SERVER DIRECTORY ===" && \
-    go mod init mattermost && \
-    echo "=== DOWNLOADING DEPENDENCIES ===" && \
+    echo "=== GO MODULE ALREADY EXISTS, DOWNLOADING DEPENDENCIES ===" && \
     go mod tidy && \
     echo "=== BUILDING SERVER FROM ./cmd/mattermost ===" && \
-    go build -o ../bin/mattermost ./cmd/mattermost
+    go build -o ../bin/mattermost ./cmd/mattermost && \
+    echo "=== BUILD SUCCESSFUL ===" && \
+    ls -la ../bin/
 
 # Final runtime image
 FROM alpine:3.18
