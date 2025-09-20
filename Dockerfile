@@ -67,9 +67,7 @@ RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
     echo "=== NAVIGATING TO SERVER DIRECTORY ===" && \
     cd server && \
     ls -la && \
-    echo "=== GO MODULE ALREADY EXISTS, DOWNLOADING DEPENDENCIES ===" && \
-    go mod tidy && \
-    echo "=== BUILDING SERVER FROM ./cmd/mattermost ===" && \
+    echo "=== BUILDING SERVER FROM ./cmd/mattermost (SKIP MOD TIDY) ===" && \
     go build -o ../bin/mattermost ./cmd/mattermost && \
     echo "=== BUILD SUCCESSFUL ===" && \
     ls -la ../bin/
