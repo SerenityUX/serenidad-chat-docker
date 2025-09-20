@@ -2,6 +2,13 @@
 # Force rebuild by using a unique timestamp
 FROM node:18-alpine AS webapp-build
 
+# Force rebuild by adding a unique layer
+RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
+    echo "=== FORCING FRESH BUILD ===" && \
+    echo "Timestamp: $(date)" && \
+    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
+    echo "=== BUILD STARTING ==="
+
 # Install build dependencies
 RUN apk add --no-cache git make g++ python3
 
@@ -27,6 +34,13 @@ RUN npm run build
 # Build the server
 # Force rebuild by using a unique timestamp
 FROM golang:1.21-alpine AS server-build
+
+# Force rebuild by adding a unique layer
+RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
+    echo "=== FORCING FRESH BUILD ===" && \
+    echo "Timestamp: $(date)" && \
+    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
+    echo "=== BUILD STARTING ==="
 
 # Install build dependencies
 RUN apk add --no-cache git make g++
@@ -71,6 +85,14 @@ RUN echo "=== SERVER BUILD INFO ===" && \
     echo "=== CLIENT BUILD INFO ===" && \
     ls -la /mattermost/client/ && \
     echo "=== BUILD COMPLETE ==="
+
+# Force final rebuild with unique timestamp
+RUN echo "FINAL_BUILD_TIMESTAMP=$(date +%s)" > /tmp/final_build_info.txt && \
+    echo "This build completed at: $(date)" && \
+    echo "Build hash: $(echo $FINAL_BUILD_TIMESTAMP | sha256sum | cut -d' ' -f1)" && \
+    echo "=== FINAL BUILD COMPLETE ===" && \
+    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
+    echo "=== BUILD FINISHED ==="
 
 # Create necessary directories
 RUN mkdir -p /mattermost/config /mattermost/data /mattermost/logs /mattermost/plugins /mattermost/client/plugins /mattermost/bleve-indexes
