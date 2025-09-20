@@ -22,6 +22,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
     rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
     git clone https://github.com/mattermost/mattermost.git . && \
+    git checkout v9.4.0 && \
     echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
     git log --oneline -5 && \
@@ -56,6 +57,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
     rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
     git clone https://github.com/mattermost/mattermost.git . && \
+    git checkout v9.4.0 && \
     echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
     git log --oneline -5 && \
