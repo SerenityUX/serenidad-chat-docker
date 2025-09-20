@@ -1,14 +1,5 @@
 # Multi-stage build for custom Mattermost fork
-# Force rebuild by using a unique timestamp
 FROM node:18-alpine AS webapp-build
-
-# Force rebuild by adding a unique layer
-RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
-    echo "=== FORCING FRESH BUILD ===" && \
-    echo "Timestamp: $(date)" && \
-    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD STARTING ===" && \
-    echo "This is a fresh build at $(date +%s)" > /tmp/fresh_build.txt
 
 # Install build dependencies
 RUN apk add --no-cache git make g++ python3
@@ -16,16 +7,8 @@ RUN apk add --no-cache git make g++ python3
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork with aggressive cache busting
-RUN echo "=== FORCING FRESH BUILD ===" && \
-    echo "Timestamp: $(date)" && \
-    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
-    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
-    echo "=== REPOSITORY VERIFICATION ===" && \
-    git remote -v && \
-    git log --oneline -5 && \
-    echo "=== BUILD STARTING ==="
+# Clone your custom fork
+RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
 
 # Install webapp dependencies and build
 WORKDIR /mattermost/webapp
@@ -33,16 +16,7 @@ RUN npm install --no-audit --no-fund
 RUN npm run build
 
 # Build the server
-# Force rebuild by using a unique timestamp
 FROM golang:1.24-alpine AS server-build
-
-# Force rebuild by adding a unique layer
-RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
-    echo "=== FORCING FRESH BUILD ===" && \
-    echo "Timestamp: $(date)" && \
-    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD STARTING ===" && \
-    echo "This is a fresh build at $(date +%s)" > /tmp/fresh_build.txt
 
 # Install build dependencies
 RUN apk add --no-cache git make g++
@@ -50,27 +24,12 @@ RUN apk add --no-cache git make g++
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork with aggressive cache busting
-RUN echo "=== FORCING FRESH BUILD ===" && \
-    echo "Timestamp: $(date)" && \
-    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
-    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
-    echo "=== REPOSITORY VERIFICATION ===" && \
-    git remote -v && \
-    git log --oneline -5 && \
-    echo "=== BUILD STARTING ==="
+# Clone your custom fork
+RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
 
 # Build the server - navigate to server directory and build
-RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
-    ls -la && \
-    echo "=== NAVIGATING TO SERVER DIRECTORY ===" && \
-    cd server && \
-    ls -la && \
-    echo "=== BUILDING SERVER FROM ./cmd/mattermost (EXCLUDE ENTERPRISE) ===" && \
-    go build -tags "!enterprise,!focalboard" -o ../bin/mattermost ./cmd/mattermost && \
-    echo "=== BUILD SUCCESSFUL ===" && \
-    ls -la ../bin/
+RUN cd server && \
+    go build -tags "!enterprise,!focalboard" -o ../bin/mattermost ./cmd/mattermost
 
 # Final runtime image
 FROM alpine:3.18
@@ -88,22 +47,6 @@ WORKDIR /mattermost
 # Copy built binaries and assets
 COPY --from=server-build /mattermost/bin/mattermost /mattermost/bin/mattermost
 COPY --from=webapp-build /mattermost/webapp/dist /mattermost/client
-
-# Debug: Show what we're actually running
-RUN echo "=== SERVER BUILD INFO ===" && \
-    /mattermost/bin/mattermost version && \
-    echo "=== CLIENT BUILD INFO ===" && \
-    ls -la /mattermost/client/ && \
-    echo "=== BUILD COMPLETE ==="
-
-# Force final rebuild with unique timestamp
-RUN echo "FINAL_BUILD_TIMESTAMP=$(date +%s)" > /tmp/final_build_info.txt && \
-    echo "This build completed at: $(date)" && \
-    echo "Build hash: $(echo $FINAL_BUILD_TIMESTAMP | sha256sum | cut -d' ' -f1)" && \
-    echo "=== FINAL BUILD COMPLETE ===" && \
-    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD FINISHED ===" && \
-    echo "This is a fresh build at $(date +%s)" > /tmp/final_fresh_build.txt
 
 # Create necessary directories
 RUN mkdir -p /mattermost/config /mattermost/data /mattermost/logs /mattermost/plugins /mattermost/client/plugins /mattermost/bleve-indexes
