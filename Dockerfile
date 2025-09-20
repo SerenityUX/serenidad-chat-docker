@@ -7,7 +7,8 @@ RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
     echo "=== FORCING FRESH BUILD ===" && \
     echo "Timestamp: $(date)" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD STARTING ==="
+    echo "=== BUILD STARTING ===" && \
+    echo "This is a fresh build at $(date +%s)" > /tmp/fresh_build.txt
 
 # Install build dependencies
 RUN apk add --no-cache git make g++ python3
@@ -40,7 +41,8 @@ RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
     echo "=== FORCING FRESH BUILD ===" && \
     echo "Timestamp: $(date)" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD STARTING ==="
+    echo "=== BUILD STARTING ===" && \
+    echo "This is a fresh build at $(date +%s)" > /tmp/fresh_build.txt
 
 # Install build dependencies
 RUN apk add --no-cache git make g++
@@ -92,7 +94,8 @@ RUN echo "FINAL_BUILD_TIMESTAMP=$(date +%s)" > /tmp/final_build_info.txt && \
     echo "Build hash: $(echo $FINAL_BUILD_TIMESTAMP | sha256sum | cut -d' ' -f1)" && \
     echo "=== FINAL BUILD COMPLETE ===" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
-    echo "=== BUILD FINISHED ==="
+    echo "=== BUILD FINISHED ===" && \
+    echo "This is a fresh build at $(date +%s)" > /tmp/final_fresh_build.txt
 
 # Create necessary directories
 RUN mkdir -p /mattermost/config /mattermost/data /mattermost/logs /mattermost/plugins /mattermost/client/plugins /mattermost/bleve-indexes
