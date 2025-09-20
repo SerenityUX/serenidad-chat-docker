@@ -1,6 +1,5 @@
 # Multi-stage build for custom Mattermost fork
-# Cache busting - never cache this layer
-ARG CACHE_BUST
+# Force rebuild by using a unique timestamp
 FROM node:18-alpine AS webapp-build
 
 # Install build dependencies
@@ -9,12 +8,16 @@ RUN apk add --no-cache git make g++ python3
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork with cache busting
-RUN echo "Cache bust: $(date +%s)" && \
+# Clone your custom fork with aggressive cache busting
+RUN echo "=== FORCING FRESH BUILD ===" && \
+    echo "Timestamp: $(date)" && \
+    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
+    rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
     git clone https://github.com/SerenityUX/serenidad-chat.git . && \
-    echo "Repository cloned successfully" && \
+    echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
-    git log --oneline -5
+    git log --oneline -5 && \
+    echo "=== BUILD STARTING ==="
 
 # Install webapp dependencies and build
 WORKDIR /mattermost/webapp
@@ -22,8 +25,7 @@ RUN npm ci --no-audit --no-fund
 RUN npm run build
 
 # Build the server
-# Cache busting - never cache this layer
-ARG CACHE_BUST
+# Force rebuild by using a unique timestamp
 FROM golang:1.21-alpine AS server-build
 
 # Install build dependencies
@@ -32,12 +34,16 @@ RUN apk add --no-cache git make g++
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork with cache busting
-RUN echo "Cache bust: $(date +%s)" && \
+# Clone your custom fork with aggressive cache busting
+RUN echo "=== FORCING FRESH BUILD ===" && \
+    echo "Timestamp: $(date)" && \
+    echo "Random: $(shuf -i 1-1000000 -n 1)" && \
+    rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
     git clone https://github.com/SerenityUX/serenidad-chat.git . && \
-    echo "Repository cloned successfully" && \
+    echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
-    git log --oneline -5
+    git log --oneline -5 && \
+    echo "=== BUILD STARTING ==="
 
 # Build the server
 RUN make build-linux
