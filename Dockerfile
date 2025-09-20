@@ -29,7 +29,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
 
 # Install webapp dependencies and build
 WORKDIR /mattermost/webapp
-RUN npm ci --no-audit --no-fund
+RUN npm install --no-audit --no-fund
 RUN npm run build
 
 # Build the server
