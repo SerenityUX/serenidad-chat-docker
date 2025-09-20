@@ -61,9 +61,12 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     git log --oneline -5 && \
     echo "=== BUILD STARTING ==="
 
-# Build the server - first check what targets are available
-RUN make help || echo "No help target, checking available targets..." && \
-    make -n 2>&1 | head -20 || echo "No make targets found, trying go build directly..." && \
+# Build the server - initialize go module and build
+RUN echo "=== INITIALIZING GO MODULE ===" && \
+    go mod init mattermost && \
+    echo "=== DOWNLOADING DEPENDENCIES ===" && \
+    go mod tidy && \
+    echo "=== BUILDING SERVER ===" && \
     go build -o bin/mattermost ./cmd/mattermost
 
 # Final runtime image
