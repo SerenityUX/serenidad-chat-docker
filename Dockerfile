@@ -34,7 +34,7 @@ RUN npm run build
 
 # Build the server
 # Force rebuild by using a unique timestamp
-FROM golang:1.21-alpine AS server-build
+FROM golang:1.24-alpine AS server-build
 
 # Force rebuild by adding a unique layer
 RUN echo "BUILD_TIMESTAMP=$(date +%s)" > /tmp/build_info.txt && \
