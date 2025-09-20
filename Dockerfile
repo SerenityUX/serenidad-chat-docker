@@ -1,4 +1,6 @@
 # Multi-stage build for custom Mattermost fork
+# Cache busting - never cache this layer
+ARG CACHE_BUST
 FROM node:18-alpine AS webapp-build
 
 # Install build dependencies
@@ -7,11 +9,12 @@ RUN apk add --no-cache git make g++ python3
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork
-RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
-# Verify we're using the correct repository
-RUN git remote -v
-RUN git log --oneline -5
+# Clone your custom fork with cache busting
+RUN echo "Cache bust: $(date +%s)" && \
+    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
+    echo "Repository cloned successfully" && \
+    git remote -v && \
+    git log --oneline -5
 
 # Install webapp dependencies and build
 WORKDIR /mattermost/webapp
@@ -19,6 +22,8 @@ RUN npm ci --no-audit --no-fund
 RUN npm run build
 
 # Build the server
+# Cache busting - never cache this layer
+ARG CACHE_BUST
 FROM golang:1.21-alpine AS server-build
 
 # Install build dependencies
@@ -27,11 +32,12 @@ RUN apk add --no-cache git make g++
 # Set working directory
 WORKDIR /mattermost
 
-# Clone your custom fork
-RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
-# Verify we're using the correct repository
-RUN git remote -v
-RUN git log --oneline -5
+# Clone your custom fork with cache busting
+RUN echo "Cache bust: $(date +%s)" && \
+    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
+    echo "Repository cloned successfully" && \
+    git remote -v && \
+    git log --oneline -5
 
 # Build the server
 RUN make build-linux
