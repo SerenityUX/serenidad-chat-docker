@@ -21,7 +21,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     echo "Timestamp: $(date)" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
     rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
-    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
+    git clone https://github.com/mattermost/mattermost.git . && \
     echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
     git log --oneline -5 && \
@@ -55,7 +55,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     echo "Timestamp: $(date)" && \
     echo "Random: $(shuf -i 1-1000000 -n 1)" && \
     rm -rf /mattermost/* /mattermost/.* 2>/dev/null || true && \
-    git clone https://github.com/SerenityUX/serenidad-chat.git . && \
+    git clone https://github.com/mattermost/mattermost.git . && \
     echo "=== REPOSITORY VERIFICATION ===" && \
     git remote -v && \
     git log --oneline -5 && \
