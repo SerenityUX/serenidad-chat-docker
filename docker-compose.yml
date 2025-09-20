@@ -21,7 +21,9 @@ services:
   mattermost:
     depends_on:
       - postgres
-    image: mattermost/${MATTERMOST_IMAGE}:${MATTERMOST_IMAGE_TAG}
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
