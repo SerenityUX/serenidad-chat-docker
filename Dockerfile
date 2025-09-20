@@ -18,17 +18,8 @@ RUN npm run build
 # Use official Mattermost server as base
 FROM mattermost/mattermost-team-edition:latest
 
-# Switch to root to make modifications
-USER root
-
-# Backup original client and replace with custom build
-RUN mv /mattermost/client /mattermost/client-original
+# Simply replace the client directory with our custom build
+# The COPY instruction will overwrite the existing /mattermost/client directory
 COPY --from=webapp-build /mattermost/webapp/dist /mattermost/client
 
-# Set ownership of the new client directory
-RUN chown -R mattermost:mattermost /mattermost/client
-
-# Switch back to mattermost user
-USER mattermost
-
-# The rest is handled by the base image (ports, healthcheck, CMD)
+# The rest is handled by the base image (ports, healthcheck, CMD, user)
