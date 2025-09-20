@@ -31,12 +31,17 @@ services:
     tmpfs:
       - /tmp
     volumes:
+      # Configuration - preserve between deployments
       - mattermost_config:/mattermost/config:rw
+      # User data - preserve between deployments  
       - mattermost_data:/mattermost/data:rw
+      # Logs - preserve for debugging
       - mattermost_logs:/mattermost/logs:rw
+      # Server plugins - preserve between deployments
       - mattermost_plugins:/mattermost/plugins:rw
-      - mattermost_client-plugins:/mattermost/client/plugins:rw
+      # Search indexes - preserve for performance
       - mattermost_bleve-indexes:/mattermost/bleve-indexes:rw
+      # NOTE: Removed mattermost_client-plugins volume to allow fresh client updates
     environment:
       - MM_SQLSETTINGS_DRIVERNAME=postgres
       - MM_SQLSETTINGS_DATASOURCE=postgres://${POSTGRES_USER:-mmuser}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-mattermost}?sslmode=disable&connect_timeout=10
@@ -47,5 +52,5 @@ volumes:
   mattermost_data:
   mattermost_logs:
   mattermost_plugins:
-  mattermost_client-plugins:
+  # Removed mattermost_client-plugins to allow fresh client updates
   mattermost_bleve-indexes:
