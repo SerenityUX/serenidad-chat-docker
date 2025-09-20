@@ -67,20 +67,8 @@ RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
     echo "=== NAVIGATING TO SERVER DIRECTORY ===" && \
     cd server && \
     ls -la && \
-    echo "=== ADDING MISSING MODEL DEFINITIONS ===" && \
-    mkdir -p model && \
-    echo 'package model' > model/missing_types.go && \
-    echo 'type CELExpressionError struct{}' >> model/missing_types.go && \
-    echo 'type VisualExpression struct{}' >> model/missing_types.go && \
-    echo 'type SubjectSearchOptions struct{}' >> model/missing_types.go && \
-    echo 'type LdapDiagnosticTestType struct{}' >> model/missing_types.go && \
-    echo 'type LdapDiagnosticResult struct{}' >> model/missing_types.go && \
-    echo 'type SupportPacketDatabaseSchema struct{}' >> model/missing_types.go && \
-    echo 'type ChannelMembersGetOptions struct{}' >> model/missing_types.go && \
-    echo 'type RetentionPolicyBatchConfigs struct{}' >> model/missing_types.go && \
-    echo 'type AccessControlPolicySearch struct{}' >> model/missing_types.go && \
-    echo "=== BUILDING SERVER FROM ./cmd/mattermost (SKIP MOD TIDY) ===" && \
-    go build -o ../bin/mattermost ./cmd/mattermost && \
+    echo "=== BUILDING SERVER FROM ./cmd/mattermost (EXCLUDE ENTERPRISE) ===" && \
+    go build -tags "!enterprise,!focalboard" -o ../bin/mattermost ./cmd/mattermost && \
     echo "=== BUILD SUCCESSFUL ===" && \
     ls -la ../bin/
 
