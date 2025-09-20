@@ -62,7 +62,7 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     echo "=== BUILD STARTING ==="
 
 # Build the server
-RUN make build-linux
+RUN make build
 
 # Final runtime image
 FROM alpine:3.18
