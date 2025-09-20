@@ -9,6 +9,9 @@ WORKDIR /mattermost
 
 # Clone your custom fork
 RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
+# Verify we're using the correct repository
+RUN git remote -v
+RUN git log --oneline -5
 
 # Install webapp dependencies and build
 WORKDIR /mattermost/webapp
@@ -26,6 +29,9 @@ WORKDIR /mattermost
 
 # Clone your custom fork
 RUN git clone https://github.com/SerenityUX/serenidad-chat.git .
+# Verify we're using the correct repository
+RUN git remote -v
+RUN git log --oneline -5
 
 # Build the server
 RUN make build-linux
@@ -46,6 +52,13 @@ WORKDIR /mattermost
 # Copy built binaries and assets
 COPY --from=server-build /mattermost/bin/mattermost /mattermost/bin/mattermost
 COPY --from=webapp-build /mattermost/webapp/dist /mattermost/client
+
+# Debug: Show what we're actually running
+RUN echo "=== SERVER BUILD INFO ===" && \
+    /mattermost/bin/mattermost version && \
+    echo "=== CLIENT BUILD INFO ===" && \
+    ls -la /mattermost/client/ && \
+    echo "=== BUILD COMPLETE ==="
 
 # Create necessary directories
 RUN mkdir -p /mattermost/config /mattermost/data /mattermost/logs /mattermost/plugins /mattermost/client/plugins /mattermost/bleve-indexes
