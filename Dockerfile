@@ -68,6 +68,7 @@ RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
     cd server && \
     ls -la && \
     echo "=== ADDING MISSING MODEL DEFINITIONS ===" && \
+    mkdir -p model && \
     echo 'package model' > model/missing_types.go && \
     echo 'type CELExpressionError struct{}' >> model/missing_types.go && \
     echo 'type VisualExpression struct{}' >> model/missing_types.go && \
