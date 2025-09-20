@@ -61,23 +61,18 @@ RUN echo "=== FORCING FRESH BUILD ===" && \
     git log --oneline -5 && \
     echo "=== BUILD STARTING ==="
 
-# Build the server - check structure and build
+# Build the server - navigate to server directory and build
 RUN echo "=== CHECKING REPOSITORY STRUCTURE ===" && \
     ls -la && \
-    echo "=== CHECKING FOR GO FILES ===" && \
-    find . -name "*.go" -type f | head -10 && \
-    echo "=== CHECKING FOR MAIN PACKAGE ===" && \
-    find . -name "main.go" -type f && \
-    echo "=== INITIALIZING GO MODULE ===" && \
+    echo "=== NAVIGATING TO SERVER DIRECTORY ===" && \
+    cd server && \
+    ls -la && \
+    echo "=== INITIALIZING GO MODULE IN SERVER DIRECTORY ===" && \
     go mod init mattermost && \
     echo "=== DOWNLOADING DEPENDENCIES ===" && \
     go mod tidy && \
-    echo "=== BUILDING SERVER ===" && \
-    (go build -o bin/mattermost ./cmd/mattermost || \
-     go build -o bin/mattermost ./server || \
-     go build -o bin/mattermost . || \
-     echo "Build failed, trying to find main package..." && \
-     find . -name "main.go" -exec dirname {} \; | head -1 | xargs -I {} go build -o bin/mattermost {})
+    echo "=== BUILDING SERVER FROM ./cmd/mattermost ===" && \
+    go build -o ../bin/mattermost ./cmd/mattermost
 
 # Final runtime image
 FROM alpine:3.18
