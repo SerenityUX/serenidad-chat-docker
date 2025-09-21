@@ -5,7 +5,7 @@ FROM node:18-alpine AS webapp-build
 RUN apk add --no-cache \
     git make g++ python3 \
     autoconf automake libtool \
-    pkgconfig pkg-config \
+    pkgconfig \
     nasm \
     libpng-dev \
     libjpeg-turbo-dev \
