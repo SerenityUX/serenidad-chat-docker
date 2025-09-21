@@ -1,8 +1,16 @@
 # Build custom web client
 FROM node:18-alpine AS webapp-build
 
-# Install build dependencies
-RUN apk add --no-cache git make g++ python3 autoconf automake libtool
+# Install build dependencies for native packages
+RUN apk add --no-cache \
+    git make g++ python3 \
+    autoconf automake libtool \
+    pkgconfig pkg-config \
+    nasm \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    giflib-dev \
+    tiff-dev
 
 # Set working directory
 WORKDIR /mattermost
