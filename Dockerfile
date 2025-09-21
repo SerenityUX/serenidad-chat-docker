@@ -2,7 +2,7 @@
 FROM node:18-alpine AS webapp-build
 
 # Install build dependencies
-RUN apk add --no-cache git make g++ python3
+RUN apk add --no-cache git make g++ python3 autoconf automake libtool
 
 # Set working directory
 WORKDIR /mattermost
